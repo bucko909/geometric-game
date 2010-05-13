@@ -1,0 +1,19 @@
+uniform vec3 eye;
+
+// Do world transform
+void main() {
+	// TODO model transforms go here
+	vec3 dir = gl_Vertex - eye; // Vector from eye to gl_Vertex
+	vec3 mid = dir / 2 + eye; // Midpoint of gl_Vertex and eye
+	vec3 dir_normal = normalize(dir);
+	vec3 norm_1 = cross(dir, vec3(0,0,1)); // This is parallel to the z-plane
+	vec3 norm = cross(dir, norm_1); // This now pointing at the centre from p
+	float p_radius = mid.z / norm.z; // Dist from mid to centre
+	vec3 centre = mid + norm_1 * p_radius;
+	float radius = length(centre - eye);
+
+	// Next is the offset along dir that, in Hyperbolic space, gl_Vertex appears from eye. If it's behind, it'll wind up negative.
+	float dist_posneg = log((eye.z/gl_Vertex.z) * ((radius-sqrt(radius*radius - gl_Vertex.z*gl_Vertex.z))/(radius-sqrt(radius*radius - eye.z*eye.z))));
+	vec4 newPos_eucWorld = vec4(eye + dir_normal * dist_posneg, 1);
+	gl_Position = gl_ModelViewProjectionMatrix * newPos_eucWorld;
+}

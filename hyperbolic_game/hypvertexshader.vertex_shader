@@ -1,0 +1,72 @@
+uniform vec3 eye;
+#version 110
+
+// Do world transform
+void main() {
+	// TODO model transforms go here
+
+	// Start by getting a 3-vector for the point we wish to transform.
+	vec4 point4 = gl_Vertex;
+	point4 = point4 / point4[3];
+	vec3 point = vec3(point4.x, point4.y, point4.z);
+
+	// Now find the directional vector from the eye to the point.
+	vec3 dir = point - eye;
+	vec3 dir_normal = normalize(dir);
+
+	// And the midpoint of the line segment connecting them.
+	vec3 mid = dir / 2.0 + eye; // Midpoint of gl_Vertex and eye
+
+	// If we cross product the direction with (0,0,1), we get a vector
+	// which is perpendicular to the direction and has z component equal to
+	// zero - in particular, it will be parallel to the z=0 plane.
+	vec3 norm_1 = cross(dir, vec3(0,0,1));
+
+	// Cross producting this result with the direction vector yields a new
+	// vector which must be a perpendicular bisector of our connecting line,
+	// and of the bisector parallel to the z=0 plane. Thus, it must point at
+	// the centre of the circle which is coplanar to eye and point, and is
+	// perpendicular to the z=0 plane.
+	vec3 norm = cross(dir, norm_1);
+
+	vec4 newPos_eucWorld;
+	// Here we special case. If the radius is huge compared to our z position,
+	// we can safely assume that the circle is just a vertical line.
+	if (abs(norm.z) > 0.001 * abs(mid.z)) {
+		// Now calculate the relative distance of the midpoint to z=0 plane
+		// along this normal. The line intersects the centre of our circle at 
+		// z=0, so this is the number of copies of norm we need to subtract
+		// from mid to get to centre.
+		float norm_mult = mid.z / norm.z;
+
+		// Now we've got the centre everything else just drops out.
+		vec3 centre = mid - norm * norm_mult;
+
+		// The eye is on the circumference of the circle, hence is at distance
+		// radius from the centre.
+		float radius = distance(centre, eye);
+
+		// Now we want the direction vector that the geodesic we found has at
+		// eye. Since this will be coplanar to the circle, we can cross product
+		// norm with norm_1 to get something facing the right way.
+		vec3 hyp_vector = normalize(cross(norm_1, norm));
+
+		// Now we calculate the hyperbolic distance between eye and point
+		float dist = abs(log((eye.z/point.z) * ((radius-sqrt(radius*radius - point.z*point.z))/(radius-sqrt(radius*radius - eye.z*eye.z)))));
+
+		// Multiply by the hyperbolic facing vector and add to eye to get our
+		// projected co-ordinates!
+		newPos_eucWorld = vec4(eye + hyp_vector * dist, 1.0);
+	} else {
+		// We assume we're simply in a vertical line segment.
+		float dist = log(eye.z/point.z);
+		vec3 hyp_vector = vec3(0,0,1);
+		newPos_eucWorld = vec4(eye - hyp_vector * dist, 1.0);
+	}
+	gl_Position = gl_ModelViewProjectionMatrix * newPos_eucWorld;
+//	gl_Position = gl_ModelViewProjectionMatrix * vec4(point, 1.0);
+//	gl_Position = gl_ProjectionMatrix * vec4(point, 1.0);
+//	gl_Position = gl_ProjectionMatrix * point4;
+//	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	gl_FrontColor = gl_Color;
+}

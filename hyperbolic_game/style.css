@@ -1,0 +1,98 @@
+/* Default style */
+body {
+    background-color: #ffffff;
+    color:            #000000;
+    font-family:      arial;
+}
+
+
+h1 {
+    border-bottom-width: 3;
+    border-bottom-style: solid;
+    border-bottom-color: #88aacc;
+    border-top-width:    3;
+    border-top-style:    solid;
+    border-top-color:    #88aacc;
+    text-align:          center;
+    background-color:    #eeeeff;
+}
+
+h2 {
+    border-top-width:    2;
+    border-top-style:    solid;
+    border-top-color:    #88aacc;
+    border-bottom-width: 2;
+    border-bottom-style: solid;
+    border-bottom-color: #88aacc;
+    background-color:    #f8f8ff;
+}
+
+h3 {
+    border-bottom-width: 2;
+    border-bottom-style: solid;
+    border-bottom-color: #88aacc;
+}
+
+
+/* Links */
+a:link, a:visited, a:active, a:hover {
+    text-decoration: none;
+    font-weight:     bold;
+    color:           #224488;
+
+}
+
+a:hover {
+    color:           #3366dd;
+    text-decoration: underline;
+}
+
+
+/* Subclass: table */
+.table {
+    border-width:     0;
+    background-color: #9999cc;
+}
+
+
+/* Subclasses: td1, td2 and td3 */
+.td1, .td2, .td3 {
+    border-width:   0;
+    padding:        4;
+    vertical-align: top;
+    font-family:    arial;
+}
+.td1 { background-color: #ffe8e8; }
+.td2 { background-color: #e8e8ff; }
+.td3 { background-color: #e8e8e8; }
+
+
+
+/* Subclass: codetable */
+.codetable {
+    width:          100%;
+    border-width:   0;
+}
+
+
+/* Subclasses: codetext and codecode */
+.codetext, .codecode {
+    border-width:     4;
+    border-style:     outset;
+    border-color:     #e0e0e0;
+    text-align:       left;
+    vertical-align:   top;
+}
+
+.codetext {
+    background-color: #e8e8f8;
+    color:            #000000;
+    padding:          10;
+    font-family:      arial;
+}
+
+.codecode {
+    background-color: #e0f0e0;
+    color:            #221100;
+    padding:          5;
+}
